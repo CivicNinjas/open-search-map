@@ -16,7 +16,7 @@ var search_db = function (){
            package_verison: '0.1',
            persist: 'cookies'
          });
-         // geoloqi.auth={'access_token':'fb75d-ddf59124a0403299ea67e6c001d14c676806459d'};
+         geoloqi.auth={'access_token':'fb75d-ddf59124a0403299ea67e6c001d14c676806459d'};
         
          var call = function(type,url,options){
              var dfd = new $.Deferred()
