@@ -1,52 +1,29 @@
-open-search-map
+open-search-map v 0.0.3
 ===============
 
 This is an HTML mobile app for adding and viewing search and rescue activities.
 
-
-File descriptions (
+File descriptions:
 These descriptions are suggestions for managing the code.  We are not above fudging the distinctions in favor of good things.):
 
 index.html  --  Contains markup for jqm pages
+ready.js  -- loads the base maps to the global search_app
 
-search_db.js --  Intermediate object for handling search data, currently we use geoloqi
 
-ggl_map.js -- map object for interacting with google maps api
+Description of modules:
 
-mapboxMap.js -- map object for mapbox interactions
+search.app  -- creates search_app in the global spaace.  Adds methods for changing the base map
+search.data   -- adds .data to the search app.  This includes all calls to the geoloqi database 
+search.users  -- user login
+search.markers -- adds .searches to the search app for manipulating a Leaflet feature collection of search markers
+search.layer.menu -- adds methods to search_app for retrieving saved searches
 
-jqm_app.js -- Any jqm interactions.  This 
+
+Also loaded by not adding to the search_app object:
+search.main.menu -- events for the left panel of the app
+socket.messages -- loads socket.io listener and events for incoming messages
 
 
 Libraries:
-socket.io.min.ja for sharing map changes
+socket.io.min.js for sharing map changes
 
-
-NOTE:  GeoJSON.js, markerwithclusterer_compiled.js, and markerwithlabel.js are unused so far but hanging around just in case.
-_
-
-
-Map Object 
-
-Contruct  e.g  coolmap = new coolMap(document.getElementById('map_content'))
-    
-Listen for these events:
-    
-        start_add_search: adds onetime listenter for next click on map, 
-        triggers a 'stop_add_search' event and includes an object with
-        latitude and longitude e.g.  {latitude:00.00,longitude:00.00}
-        
-        show_user: center map on user location
-        
-        clear_map: remove all markers from the map, clears the search_list
-        
-        display_search: receive a valid geoloqi place response in the trigger.  
-        Place it on the map. Add the marker to the search_list
-        
-        display_all: fit all searches on map in view
-        
-        
-        
-        
-        
-            

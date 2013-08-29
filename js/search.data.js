@@ -2,7 +2,7 @@
 // This object contains all the relevant methods for retrieve information on searches
 // currently this data is stored with geoloqi so this is mainly a wrapper on geoloqi functions
 
-var search_db = function (){
+(function (app){
     var geo_db={}; 
  
     var geoloqi_caller = function (){
@@ -16,7 +16,7 @@ var search_db = function (){
            package_verison: '0.1',
            persist: 'cookies'
          });
-         // geoloqi.auth={'access_token':'fb75d-ddf59124a0403299ea67e6c001d14c676806459d'};
+         geoloqi.auth={'access_token':'fb75d-ddf59124a0403299ea67e6c001d14c676806459d'};
         
          var call = function(type,url,options){
              var dfd = new $.Deferred()
@@ -36,7 +36,11 @@ var search_db = function (){
     
     var place = function(){
         this.add = function(options){
+            options = options || {};
+            var user_auth=geoloqi.auth;
+            geoloqi.auth={'access_token':'fb75d-ddf59124a0403299ea67e6c001d14c676806459d'};            
             return GEODB("post","place/create",options);
+
         };
     
         this.update = function(place_id,options){
@@ -78,6 +82,7 @@ var search_db = function (){
                 })
                 .fail(function(error){
                     get_all.all_places=[];
+                    get_all.dfd = new $.Deferred();
                     get_all.dfd.reject(error);
                 });
 
@@ -88,7 +93,6 @@ var search_db = function (){
             var this_callback=callback;
             get_all(options)
               .done(function(response){
-                  console.log(response);
                 for (var i = 0; i < response.places.length; i++){
                    var place=response.places[i];
                     if (this_callback){
@@ -107,10 +111,34 @@ var search_db = function (){
         return this;
     };
     
-    
+    var layer = function(){
+        
+        this.get = function (layer_id){
+            if(layer_id){
+                return GEODB('post','layer/info/'+layer_id);
+            }
+        };
+        
+        this.update = function(layer_id,options){
+            return GEODB("post",'layer/update/'+layer_id,options)
+        };        
+        
+    };
 
     var layers = function (){
         
+        this.add = function (layer_name){            
+            if(options.name){
+                return GEODB('post','layer/create',options);
+            }
+        };
+        
+        this.delete = function (layer_id) {
+            if(layer_id){
+                return GEODB('post','layer/delete/'+layer_id);
+            }
+        };
+
         this.all = function (){
             return GEODB('get','layer/list');
         };
@@ -146,23 +174,42 @@ var search_db = function (){
         this.createGroup = function(){
            return GEODB('post', 'group/create', {'title':'TESTcth', 'visibility':'open', 'publish_access':'open'})
         };
+
+        this.members = function(token){
+            return GEODB('get', 'group/members/' + token);
+        }
+
+        this.members.add = function(token, user_id){
+            GEODB('post', 'group/join/' + token, {'user_id' : user_id});
+        }
     };
    
-    geoloqi.groups = new groups();  
-    geoloqi.layers = new layers();
-    geoloqi.places = new places();
-
     var user = function(){
         var client_id = client_id || 'd8fa36c91c761155e82795a6745b4e23',
             client_secret='eb3c1d6ce7af8beb717b658743f4d139';
-            
+
         this.anon = function(){
+
             return GEODB('post','user/anon',{client_id:client_id})
+        };
+        
+        this.profile = function(user_id){
+            var options = options || {};
+            options.client_id=client_id;
+            options.client_secret=client_secret;
+            return GEODB('post','user/info/'+user_id,options)
         };
         
         this.create = function(options){
             options.client_id=client_id;
             return GEODB('post','user/create',options);
+        };
+
+        this.update = function(user_id,options){
+            options = options || {};
+            options.client_id=client_id;
+            options.client_secret=client_secret;
+            return GEODB("post",'user/update/'+user_id,options)
         };
 
         this.delete =function (user_id){
@@ -182,16 +229,17 @@ var search_db = function (){
             options.client_secret=client_secret;
             return GEODB('post','user/list',options);
         };
+
     };
 
-
-    
+    geo_db.groups = new groups();
+    geo_db.layer = new layer();
     geo_db.layers = new layers();
     geo_db.place = new place();
     geo_db.places = new places();
     geo_db.user = new user();
     geo_db.users = new users();
     geo_db.login = geoloqi.login;
-    return geo_db;
+    app.data = geo_db;
         
-};
+})(search_app);
