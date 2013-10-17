@@ -2,7 +2,8 @@ open-search-map v 0.0.3
 ===============
 
 This is an HTML mobile app for adding and viewing search and rescue activities.
-[Try it out](http://codefortulsa.github.io/open-search-map/).
+
+__Try it out at <http://codefortulsa.github.io/open-search-map/>__
 
 File descriptions:
 These descriptions are suggestions for managing the code.  We are not above fudging the distinctions in favor of good things.):
